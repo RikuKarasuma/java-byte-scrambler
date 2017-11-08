@@ -4,12 +4,12 @@ import java.nio.ByteBuffer;
 
 /**
  * A Static Byte Binary Tools Class related to scrambling and 
- * unscrambling data. Some of these Tools depend on the Twos
- * Complement System of Signed Variables. 
+ * unscrambling data. Some of these Tools may depend on the Twos
+ * Complement System and have not been tested outside of such.
  *  
  * @author Owen McMonagle.
  * @version 0.3
- * @since 05/11/2017 Updated 06/11/2017
+ * @since 05/11/2017 Updated 08/11/2017
  * 
  * @see Blueprint
  * @see Type
@@ -130,7 +130,7 @@ public final class ByteTools
 	 * Takes a Binary String and scrambles each Byte within it. The first
 	 * Bit of every Byte will be inverted to either a '1' or '0' depending
 	 * on the 'reverse' flag. The rebuilt Binary String is then returned in
-	 * Byte Array form. Depends on Twos Complement.
+	 * Byte Array form. 
 	 * @param to_scramble - Binary String to scramble.
 	 * @param reverse - False to scramble to '1', True to unscramble to '0'.
 	 * @return Scrambled Binary String. 
@@ -144,7 +144,9 @@ public final class ByteTools
 	 * Takes a Binary String and scrambles each Byte within it. The first
 	 * Bit of every Byte will be inverted to either a '1' or '0' depending
 	 * on the 'reverse' flag. The rebuilt Binary String is then returned. 
-	 * Depends on Twos Complement.
+	 * Presumes the First Bit of the Byte always starts with '1'. Won't 
+	 * work when reversed otherwise. 
+	 * 
 	 * @param to_scramble - Binary String to scramble.
 	 * @param reverse - False to scramble to '1', True to unscramble to '0'.
 	 * @return Scrambled Binary String. 
@@ -163,7 +165,8 @@ public final class ByteTools
 	/**
 	 * A basic Bit Scrambler. It finds the first Bit valued '1', then turns
 	 * it into a '0'. If the 'reverse' Parameter is 'true', then the first
-	 * Bit '0' becomes a '1'. Depends on Twos Complement.
+	 * Bit '0' becomes a '1'. Presumes the First Bit of the Byte always 
+	 * starts with '1'. Won't work when reversed otherwise. 
 	 *    
 	 * @param byte_ - A Byte in Binary String form.
 	 * @param reverse - True to scramble, False to unscramble.
