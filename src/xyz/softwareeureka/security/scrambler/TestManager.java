@@ -32,6 +32,7 @@ public final class TestManager
 			System.err.println("Byte tools successful: " + byte_tools_tests);
 			System.err.println("Encoding message successful: " + encoded_msg_tests);
 		}
+	
 	}
 
 	public static void main(String[] args) 

@@ -11,8 +11,8 @@ import java.util.Random;
  * ensures a completely new Cipher each time.
  *   
  * @author Owen McMonagle.
- * @version 0.3
- * @since 05/11/2017 Updated 06/11/2017
+ * @version 0.4
+ * @since 05/11/2017 Updated 08/11/2017
  * 
  * @see ByteTools
  * @see Blueprint
@@ -29,6 +29,12 @@ public final class Smartprint extends Blueprint
 	 * 'populateIndexes'. Null after use within Constructor.
 	 */
 	private String[] binary = null;
+	
+	/**
+	 * Alternative Storage, for non Binary Strings. Null after use 
+	 * within Constructor.
+	 */
+	private byte[] data = null;
 
 	/**
 	 * Takes in a Binary String where each Byte is Delimited with
@@ -66,9 +72,19 @@ public final class Smartprint extends Blueprint
 		// Nullify as we no longer need it.
 		binary = null;
 	}
+	
+	public Smartprint(final byte[] byte_array) 
+	{
+		data = byte_array;
+		addAll(populate());
+		populateIndexes();
+		// Nullify as we no longer need it.
+		data = null;
+	}
 
 	/**
-	 * Generates a List of {@link Type}s the Length of the 'binary' Array.
+	 * Generates a List of {@link Type}s the Length of the 'binary' or 
+	 * 'data' Arrays.
 	 * Each {@link Type} is randomly generated. Once completed the List is
 	 * returned.
 	 * @return ArrayList of randomly generated {@link Type}s. 
@@ -77,7 +93,8 @@ public final class Smartprint extends Blueprint
 	public ArrayList<Type> populate() 
 	{
 		final ArrayList<Type> types = new ArrayList<>();
-		final int length = binary.length, random_bound = Type.values().length;
+		final int length = ((binary != null) ? binary.length : data.length),
+				random_bound = Type.values().length;
 		final Random random = new Random();
 		for(int i = 0; i < length; i++)
 			types.add(Type.values()[random.nextInt(random_bound)]);
@@ -86,20 +103,23 @@ public final class Smartprint extends Blueprint
 
 	/**
 	 * Generates an Array of Indexes and sets them within {@link Blueprint}. 
-	 * Where each Index is a Bit Position within a Byte on the 'binary' Array.
-	 * The Bit Position itself is random but can never be the Length of that
-	 * specific Byte, One or Zero. This is so we can accommodate swapping Bits 
-	 * Left and Right.
+	 * Where each Index is a Bit Position within a Byte on the 'binary' or
+	 * the 'data' Arrays.
+	 * The Bit Position itself is random but requires Two Bits space on each
+	 * Side of the Byte. This is so we can accommodate swapping Bits Left 
+	 * and Right.
 	 */
 	@Override
 	public void populateIndexes() 
 	{
-		final int length = binary.length, offset = 1;
+		final int length = (binary != null) ? binary.length : data.length, offset = 2;
 		final Random random = new Random();
 		setIndex(new byte[length]);
 		for(int i = 0; i < length; i ++)
 		{
-			byte next_index = (byte) random.nextInt(binary[i].length() - offset);
+			final byte boundary = (byte) ((binary != null) ? binary[i].length():
+				(Integer.toBinaryString(data[i]).length()));
+			byte next_index = (byte) random.nextInt(boundary - offset);
 			// If Zero or One, correct in case of Swap.
 			if(next_index == 0 || next_index == 1)
 				next_index = 2;

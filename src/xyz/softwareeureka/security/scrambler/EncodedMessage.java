@@ -1,26 +1,38 @@
 package xyz.softwareeureka.security.scrambler;
 
+import java.util.Arrays;
+
 /**
  * An encoded Message. <br>
  * 
  * Use Cases: <br><br>
+ * 
+ * Takes Byte Array and scrambles its Information.<br><br>
+ * 
  * Takes User specified Text and scrambles it using a Randomly generated 
  * {@link Smartprint}.<br><br>
+ * 
  * Takes a encoded Byte Array for storage and/or later decryption.<br><br>
+ * 
  * Takes User specified Binary and {@link Smartprint} for decoding said
  * Binary.<br><br>
+ * 
  * Takes User specified Text and {@link Smartprint}. Then scrambles said
  * Text with specified {@link Smartprint}<br><br>
  * 
- * Never intended to be Polymorphed, Inherited or Serialized.
+ * 
+ * Never intended to be Polymorphed, Inherited or Serialized. The scrambled
+ * Bytes and {@link Smartprint} Cipher Map, if transported.. are to be done
+ * so, separately. This is to limit the Risk that the Map will be used to 
+ * decipher the scrambled Bytes. 
  * 
  *  
  * @author Owen McMonagle.
- * @since 06/11/2017
+ * @since 06/11/2017 updated 08/11/2017
  * @see ByteTools
  * @see Smartprint
  * @see Type
- * @version 0.1
+ * @version 0.2
  *
  */
 public final class EncodedMessage
@@ -37,12 +49,23 @@ public final class EncodedMessage
 	private Smartprint map = null;
 	
 	/**
-	 * For storing encoded Bytes with no Map.
-	 * @param encoded_msg - Pre-encoded Bytes.
+	 * For storing Bytes with no Map.
+	 * @param bytes - Random Bytes.
 	 */
-	public EncodedMessage(final byte[] encoded_msg)
+	public EncodedMessage(final byte[] bytes)
 	{
-		msg = encoded_msg;
+		msg = bytes;
+	}
+	
+	/**
+	 * For encoding a Byte Array with a specified {@link Smartprint}.
+	 * @param bytes - Random Bytes to encode.
+	 * @param encoding_map - Cipher Map to encode with.
+	 */
+	public EncodedMessage(final byte[] bytes, final Smartprint encoding_map)
+	{
+		map = encoding_map;
+		msg = ByteTools.scramble(bytes, map);
 	}
 	
 	/**
@@ -51,10 +74,8 @@ public final class EncodedMessage
 	 */
 	public EncodedMessage(final String text) 
 	{
-		String binary = ByteTools.stringtoBinary(text).toString();
-		map = new Smartprint(binary);
-		binary = ByteTools.scramble(binary, map);
-		msg = ByteTools.array(binary);
+		map = new Smartprint(text.getBytes());
+		msg = ByteTools.scramble(text.getBytes(), map);
 	}
 	
 	/**
@@ -64,23 +85,8 @@ public final class EncodedMessage
 	 */
 	public EncodedMessage(final Smartprint encoding_map, final String text) 
 	{
-		String binary = ByteTools.stringtoBinary(text).toString();
 		map = encoding_map;
-		binary = ByteTools.scramble(binary, map);
-		msg = ByteTools.array(binary);
-	}
-	
-	/**
-	 * For decoding Binary with specific Map. The decoded Bytes are
-	 * then stored within the 'msg' Byte Array.
-	 * @param binary - Binary to decode. Byte delimited by '~'.
-	 * @param decoding_map - Specific {@link Smartprint} to decode with.
-	 */
-	public EncodedMessage(String binary, final Smartprint decoding_map) 
-	{
-		map = decoding_map;
-		binary = ByteTools.scramble(binary, map);
-		msg = ByteTools.array(binary);
+		msg = ByteTools.scramble(text.getBytes(), map);
 	}
 	
 	/**
@@ -112,7 +118,7 @@ public final class EncodedMessage
 	public byte[] getDecoded(final Smartprint encoding_map)
 	{
 		if(msg != null && encoding_map != null)
-			return ByteTools.array(ByteTools.scramble(ByteTools.arrayToBinaryString(msg), encoding_map));
+			return ByteTools.scramble(Arrays.copyOf(msg, msg.length), encoding_map);
 		else
 			return new byte[0];
 	}
@@ -132,11 +138,12 @@ public final class EncodedMessage
 		String text_str = "Hello World, I hope there's no more Testing to be done here.";
 		
 		final EncodedMessage msg = new EncodedMessage(text_str);
+		final byte[] decoded = msg.getDecoded(msg.getMap());
 		System.out.println("Encoded: " + new String(msg.getEncoded()));
-		System.out.println("Decoded: " + new String(msg.getDecoded(msg.getMap())));
+		System.out.println("Decoded: " + new String(decoded));
 		
 		boolean match = text_str.getBytes().equals(msg.getEncoded()),
-				success = new String(msg.getDecoded(msg.getMap())).equals(text_str) && !match;
+				success = new String(decoded).equals(text_str) && !match;
 		
 		System.out.println("Match: " + match);
 		System.out.println("Success: " + success + "\n");
