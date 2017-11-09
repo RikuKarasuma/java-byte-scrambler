@@ -31,7 +31,7 @@ public final class BitException extends Exception
 			@Override
 			public String getMessage() 
 			{
-				return "Can't Swap here. After the Recast the Byte will no longer be recognizable.";
+				return "Can't Swap here. After the Recast the Byte will no longer be recognizable.(Unless the Pattern is predictable)";
 			}
 		},
 		SWAP_END

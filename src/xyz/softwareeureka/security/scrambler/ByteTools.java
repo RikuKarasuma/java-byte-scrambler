@@ -10,8 +10,8 @@ import xyz.softwareeureka.security.scrambler.BitException.ExceptionType;
  * Complement System and have not been tested outside of such.
  *  
  * @author Owen McMonagle.
- * @version 0.4
- * @since 05/11/2017 Updated 08/11/2017
+ * @version 0.5
+ * @since 05/11/2017 Updated 09/11/2017
  * 
  * @see Blueprint
  * @see Type
@@ -144,11 +144,6 @@ public final class ByteTools
 		System.out.println("Match: " + match);
 		System.out.println("Success: " + success + "\n");
 		return success;
-	}
-	
-	public static void main(String[] args)
-	{
-		basicBinaryTests();
 	}
 	
 	/**
@@ -347,7 +342,8 @@ public final class ByteTools
 
 	/**
 	 * Scrambles a single Byte in Binary String form to the given specified 
-	 * {@link Type}. This modified Binary String is then returned.
+	 * {@link Type}. This modified Binary String is then returned. Does not
+	 * have access to all Binary Manipulation {@link Type}s.
 	 * @param byte_ - Binary String to Scramble with {@link Type}. 
 	 * @param index - Index within Byte to modify.
 	 * @param scramble_type - {@link Type} of Bit modification.
@@ -367,6 +363,8 @@ public final class ByteTools
 				break;
 			case RIGHT:
 				swapRight(index, byte_, builder);
+				break;
+			default:
 				break;
 		}
 		return builder.toString();
@@ -401,7 +399,8 @@ public final class ByteTools
 	
 	/**
 	 * Scrambles a single Byte to the given specified {@link Type}. 
-	 * This Byte is then returned.
+	 * This Byte is then returned. All scrambling Function Types are
+	 * detailed here and within {@link Type}.
 	 * @param byte_ - Byte to Scramble with {@link Type}. 
 	 * @param index - Index within Byte to modify.
 	 * @param scramble_type - {@link Type} of Bit modification.
@@ -414,13 +413,20 @@ public final class ByteTools
 		switch(scramble_type)
 		{
 			case INVERT:
-				return invertBitAt(new_address_space, index, false);
+				return invertBitAt(new_address_space, index, false, false);
 			case LEFT:
 				return swapLeft(new_address_space, index);
 			case RIGHT:
 				return swapRight(new_address_space, index, false);
+			case INVERSE_ALL:
+				return inverse(new_address_space);
+			case INVERSE_LEFT:
+				return leftInverse(new_address_space, index);
+			case INVERSE_RIGHT:
+				return rightInverse(new_address_space, index);
+			case SHREDDED:
+				return shred(new_address_space);
 		}
-		
 		return new_address_space;
 	}
 	
@@ -479,14 +485,15 @@ public final class ByteTools
 	 * @param byte_ - Byte to invert the Bit of.
 	 * @param index - Index of the Bit to Invert.
 	 * @param skip_recast_warning - Bypass MSB Invert check.
+	 * @param ignore_value_length - Bypass Value Length check.
 	 * @return Modified Byte with inverted Bit.
 	 * @throws BitException - Thrown for Invalid Input.
 	 * @since 0.4
 	 */
-	private static byte invertBitAt(byte byte_, final int index, final boolean skip_recast_warning) throws BitException
+	private static byte invertBitAt(byte byte_, final int index, final boolean skip_recast_warning, final boolean ignore_value_length) throws BitException
 	{
 		final byte byte_length = (byte) Integer.toBinaryString(byte_).length();
-		if(index >= byte_length)
+		if(index >= byte_length && !ignore_value_length)
 			throw new BitException(ExceptionType.GREATER_THAN_LENGTH);
 		else if( (index == (byte_length-BIT_ONE_)) && !skip_recast_warning)
 			throw new BitException(ExceptionType.RECAST_WARNING);
@@ -633,7 +640,96 @@ public final class ByteTools
 		final byte mask = (byte) ((BIT_ONE_ << bit_position_0) | (BIT_ONE_ << bit_position_1));
 		
 		// XOR (^)
-		return (byte) (byte_ ^ mask);// TADAM!!!
+		return (byte) (byte_ ^ mask);
+	}
+	
+	/**
+	 * Swaps the Bit at the given Index to the Left. Then Inverts both
+	 * that Bit and the swapped Bit.
+	 * @param byte_ - Byte to swap and invert. 
+	 * @param index - Index to swap and invert at.
+	 * @return New Modified Byte.
+	 * @since 0.5
+	 */
+	public static byte leftInverse(final byte byte_, final byte index)
+	{
+		try 
+		{
+			final boolean ignore_safety_checks = false;
+			byte new_addr = swapLeft(byte_, index);
+			new_addr = invertBitAt(new_addr, index, ignore_safety_checks, ignore_safety_checks);
+			new_addr = invertBitAt(new_addr, index+1, ignore_safety_checks, ignore_safety_checks);
+			return new_addr;
+		}
+		catch (BitException e) 
+		{
+			e.printStackTrace();
+		}
+		return byte_;
+	}
+	
+	/**
+	 * Swaps the Bit at the given Index to the Right. Then Inverts both
+	 * that Bit and the swapped Bit.
+	 * @param byte_ - Byte to swap and invert. 
+	 * @param index - Index to swap and invert at.
+	 * @return New Modified Byte.
+	 * @since 0.5
+	 */
+	public static byte rightInverse(final byte byte_, final byte index)
+	{
+		try 
+		{
+			final boolean ignore_safety_checks = false;
+			byte new_addr = swapRight(byte_, index, ignore_safety_checks);
+			new_addr = invertBitAt(new_addr, index, ignore_safety_checks, ignore_safety_checks);
+			new_addr = invertBitAt(new_addr, index-1, ignore_safety_checks, ignore_safety_checks);
+			return new_addr;
+		}
+		catch (BitException e) 
+		{
+			e.printStackTrace();
+		}
+		return byte_;
+	}
+	
+	/**
+	 * Shreds a Byte of Data. Shredding is the Inversion of certain Bits
+	 * within the Parameter 'byte_'. To be used via a {@link Type}. Shreds
+	 * at Indexes: 0, 2, 4 and 6.
+	 * @param byte_ - Byte of Data to Shred.
+	 * @return Shredded Byte.
+	 * @since 0.5
+	 */
+	public static byte shred(final byte byte_)
+	{	
+		final boolean safety_bypasses = true;
+		try 
+		{
+			byte new_addr = invertBitAt(byte_, 0, safety_bypasses, safety_bypasses);
+				new_addr = invertBitAt(new_addr, 2, safety_bypasses, safety_bypasses);
+			new_addr = invertBitAt(new_addr, 4, safety_bypasses, safety_bypasses);
+			new_addr = invertBitAt(new_addr, 6, safety_bypasses, safety_bypasses);
+			
+			return new_addr;
+		} 
+		catch (BitException e) 
+		{
+			e.printStackTrace();
+		}
+		return byte_;
+	}
+	
+	/**
+	 * Inverts all of the Bits within the Parameter 'byte_'. To be used
+	 * via {@link Type}.
+	 * @param byte_ - Byte of Data to invert.
+	 * @return New inverted Byte.
+	 * @since 0.5
+	 */
+	public static byte inverse(final byte byte_)
+	{
+		return (byte) ~byte_;
 	}
 	
 
