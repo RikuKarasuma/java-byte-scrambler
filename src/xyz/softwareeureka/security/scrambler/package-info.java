@@ -8,15 +8,14 @@
  *  0.2 Implemented functions that deal exclusively with 
  *  Primitive Bytes.
  *  0.2 EncodedMessage now deals with raw Bytes.
- *  
- *  ** Next Release Plans **
- *  
  *  0.3 More Types and Cipher possibilities.
  *  0.3 New Bit Scrambling Functions.
  *  
+ *  ** Next Release Plans **
+ *  
  * @author Owen McMonagle.
- * @since 05/11/2017 updated 08/11/2017
- * @version 0.2
+ * @since 05/11/2017 updated 09/11/2017
+ * @version 0.3
  * 
  * @see xyz.softwareeureka.security.scrambler.TestManager
  * @see xyz.softwareeureka.security.scrambler.ByteTools

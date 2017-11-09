@@ -37,7 +37,10 @@ public final class TestManager
 
 	public static void main(String[] args) 
 	{
-		new TestManager();
+		//new TestManager();
+		
+		for(int i = 0; i < 10; i ++)
+			EncodedMessage.test();
 	}
 
 }
