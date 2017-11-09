@@ -18,6 +18,12 @@ import xyz.softwareeureka.security.scrambler.BitException.ExceptionType;
  */
 public final class ByteTools 
 {
+	
+	/**
+	 * Test String.
+	 * @since 0.4
+	 */
+	public static final String TEST_STR = "Hello World. Use these Cipher Tools wisely!";
 
 	/**
 	 * Represents the Byte Bit Length.
@@ -71,23 +77,24 @@ public final class ByteTools
 	 */
 	public static boolean performTests()
 	{
-		return basicBinaryStrTests() && advancedBinaryStrTests();
+		return basicBinaryStrTests() && advancedBinaryStrTests() && basicBinaryTests() && advancedBinaryTests();
 	}
 
 	/**
 	 * Tests the scrambling and decoding functionality of the 
 	 * library. The premise is, if the initial text is scrambled,
 	 * and reversed. Will it still match in the end and can it
-	 * be reverted? If so, our code works.
+	 * be reverted? If so, our code works. <br><br>
+	 * 
+	 * Tests Binary String Operations.
 	 * 
 	 * @return True if Scrambler and Unscrambler works.
 	 * @since 0.1
 	 */
 	public static boolean basicBinaryStrTests()
 	{
-		System.out.println("Beginning Basic Tests...");
-		String text = "1234567890abcdefdh";
-		StringBuilder unscrambled = stringtoBinary(text);
+		System.out.println("Beginning Basic Binary String Tests...");
+		StringBuilder unscrambled = stringtoBinary(TEST_STR);
 		StringBuilder scrambled = basicScramble(unscrambled, false);
 		unscrambled = basicScramble(scrambled, true);
 		
@@ -96,7 +103,7 @@ public final class ByteTools
 		
 		final String decoded_text = new String(decoded);
 		final boolean match = decoded.equals(encoded), 
-				success = decoded_text.equals(text) && !match;
+				success = decoded_text.equals(TEST_STR) && !match;
 		
 		System.out.println("Encoded: "+new String(encoded));
 		System.out.println("Decoded: "+new String(decoded));
@@ -109,7 +116,9 @@ public final class ByteTools
 	 * Tests the scrambling and decoding functionality of the 
 	 * library. The premise is, if the initial text is scrambled,
 	 * and reversed. Will it still match in the end and can it
-	 * be reverted? If so, our code works.
+	 * be reverted? If so, our code works. <br><br>
+	 * 
+	 * Tests Binary String Operations.
 	 * 
 	 * @return True if Scrambler and Unscrambler works.
 	 * @see Smartprint
@@ -118,9 +127,8 @@ public final class ByteTools
 	 */
 	public static boolean advancedBinaryStrTests()
 	{
-		System.out.println("Beginning Advanced Tests...");
-		String text = "Hello World. I hope this is a Cipher worthy of the Matrix.";
-		String binary = stringtoBinary(text).toString();
+		System.out.println("Beginning Advanced Binary String Tests...");
+		String binary = stringtoBinary(TEST_STR).toString();
 		final Smartprint blueprint = new Smartprint(binary);
 		binary = scramble(binary, blueprint);
 		final byte[] scrambled = array(binary);
@@ -129,10 +137,111 @@ public final class ByteTools
 		
 		final String translated = new String(unscrambled);
 		final boolean match = unscrambled.equals(scrambled), 
-				success = translated.equals(text) && !match;
+				success = translated.equals(TEST_STR) && !match;
 		
 		System.out.println("Encoded: "+new String(scrambled));
 		System.out.println("Decoded: "+new String(unscrambled));
+		System.out.println("Match: " + match);
+		System.out.println("Success: " + success + "\n");
+		return success;
+	}
+	
+	public static void main(String[] args)
+	{
+		basicBinaryTests();
+	}
+	
+	/**
+	 * Tests the isBitSet Functions by creating a Binary String of
+	 * Two Bytes. Then attempting to rebuild those Bytes by using
+	 * the isBitSet Functions. If the Two Strings match in the End.
+	 * Then our isBitSet Functions work. <br><br>
+	 * 
+	 * Tests Binary isBitSet Operations.
+	 * 
+	 * @return True if all Tests Pass.
+	 * 
+	 * @since 0.4
+	 */
+	public static boolean basicBinaryTests()
+	{
+		System.out.println("Beginning Basic Binary Tests...");
+		System.out.println("isBitSet[Array]...");
+		final byte[] original_bytes = { 3, 54 };
+		final String binary_str_rep = Integer.toBinaryString(3) + Integer.toBinaryString(54);
+		String binary_str_rebuilt = "";
+		for(int i = 0; i < original_bytes.length; i ++)
+		{
+			final byte byte_len = (byte) (Integer.toBinaryString(original_bytes[i]).length() - BIT_ONE_);
+			for( int a = byte_len; a > -1; a --)
+				try
+				{
+					binary_str_rebuilt += isBitSet(original_bytes, i, a) ? BIT_ONE : BIT_ZERO;
+				}
+				catch (BitException e)
+				{
+					e.printStackTrace();
+				}
+		}
+			
+		final boolean success_0 = binary_str_rebuilt.equals(binary_str_rep);
+		
+		System.out.println("Binary String[0]: "+binary_str_rep);
+		System.out.println("Rebuilt Binary[0]: "+binary_str_rebuilt);
+		System.out.println("Success[0]: " + success_0 + "\n");
+
+		System.out.println("isBitSet[Byte]...");
+		
+		binary_str_rebuilt = "";
+		for(int i = 0; i < original_bytes.length; i ++)
+		{
+			final byte byte_len = (byte) (Integer.toBinaryString(original_bytes[i]).length() - BIT_ONE_);
+			for( int a = byte_len; a > -1; a --)
+				try
+				{
+					binary_str_rebuilt += isBitSet(original_bytes[i], a) ? BIT_ONE : BIT_ZERO;
+				}
+				catch (BitException e)
+				{
+					e.printStackTrace();
+				}
+		}
+			
+		final boolean success_1 = binary_str_rebuilt.equals(binary_str_rep);
+		
+		System.out.println("Binary String[1]: "+binary_str_rep);
+		System.out.println("Rebuilt Binary[1]: "+binary_str_rebuilt);
+		System.out.println("Success[1]: " + success_1 + "\n");
+		
+		return success_0 && success_1;
+	}
+	
+	/**
+	 * Tests the scrambling and decoding functionality of the 
+	 * library. The premise is, if the initial text is scrambled,
+	 * and reversed. Will it still match in the end and can it
+	 * be reverted? If so, our code works. <br><br>
+	 * 
+	 * Tests Binary Scrambling Operations, specifically with
+	 * Bytes.
+	 * 
+	 * @since 0.4
+	 * @return True if Tests Pass.
+	 */
+	public static boolean advancedBinaryTests()
+	{
+		System.out.println("Beginning Advanced Binary Tests...");
+		final byte[] original_bytes = TEST_STR.getBytes();
+		final Smartprint cipher = new Smartprint(original_bytes);
+		final byte[] scrambled = scramble(original_bytes, cipher),
+				unscrambled = scramble(scrambled, cipher);
+		
+		final String translated = new String(unscrambled);
+		final boolean match = unscrambled.equals(scrambled), 
+				success = translated.equals(TEST_STR) && !match;
+		
+		System.out.println("Encoded: "+new String(scrambled));
+		System.out.println("Decoded: "+translated);
 		System.out.println("Match: " + match);
 		System.out.println("Success: " + success + "\n");
 		return success;
@@ -235,7 +344,7 @@ public final class ByteTools
 			builder.append(BYTE_DELIMITER + scramble(split_binary[i], cipher.getIndex(i), cipher.get(i)));
 		return builder.toString();
 	}
-	
+
 	/**
 	 * Scrambles a single Byte in Binary String form to the given specified 
 	 * {@link Type}. This modified Binary String is then returned.
@@ -271,22 +380,23 @@ public final class ByteTools
 	 * 
 	 * @param bytes - Scrambled or Unscrambled Bytes.
 	 * @param cipher - {@link Blueprint} to Cipher/Decipher.
-	 * @return Scrambled or Unscrambled Byte Array.
+	 * @return New Scrambled or Unscrambled Byte Array.
 	 * @since 0.4
 	 */
 	public static byte[] scramble(final byte[] bytes, final Blueprint cipher)
 	{
+		final byte[] new_address_space = new byte[bytes.length];
 		for(int i = 0; i < cipher.size(); i ++)
 			try 
 			{
-				bytes[i] = scramble(bytes[i], cipher.getIndex(i), cipher.get(i));
+				new_address_space[i] = scramble(bytes[i], cipher.getIndex(i), cipher.get(i));
 			} 
 			catch (BitException e) 
 			{
 				e.printStackTrace();
 			} 
 		
-		return bytes;
+		return new_address_space;
 	}
 	
 	/**
@@ -295,22 +405,23 @@ public final class ByteTools
 	 * @param byte_ - Byte to Scramble with {@link Type}. 
 	 * @param index - Index within Byte to modify.
 	 * @param scramble_type - {@link Type} of Bit modification.
-	 * @return Modified Byte.
+	 * @return New Modified Byte.
 	 * @since 0.4
 	 */
 	public static byte scramble(final byte byte_, final byte index, final Type scramble_type) throws BitException
 	{
+		final byte new_address_space = byte_;
 		switch(scramble_type)
 		{
 			case INVERT:
-				return invertBitAt(byte_, index, false);
+				return invertBitAt(new_address_space, index, false);
 			case LEFT:
-				return swapLeft(byte_, index);
+				return swapLeft(new_address_space, index);
 			case RIGHT:
-				return swapRight(byte_, index, false);
+				return swapRight(new_address_space, index, false);
 		}
 		
-		return byte_;
+		return new_address_space;
 	}
 	
 	/**
@@ -389,35 +500,59 @@ public final class ByteTools
 	
 	/**
 	 * Checks that the specified Bit Position within the 'array' 
-	 * Byte Array is Value '1'. 
+	 * Byte Array is Value '1'. Use in reverse Index. With Index 
+	 * Zero being the far Right Bit.
 	 *  
 	 * @param array - Byte Array to check within for Bit.
-	 * @param bit_index - Index of Bit to verify.
+	 * @param byte_index - Index of the Byte to check.
+	 * @param bit_position - Index of Bit to verify.
 	 * @throws BitException - Thrown for Invalid Input.
 	 * @return True if Bit is '1'.
 	 * 
 	 * @since 0.4
 	 */
-	public static boolean isBitSet(final byte[] array, final int bit_index) throws BitException
+	public static boolean isBitSet(final byte[] array, final int byte_index, final int bit_position) throws BitException
 	{
 		final byte byte_index_start = 0;
 		if(array == null)	
 			throw new BitException(ExceptionType.NULL_OR_INVALID);
-		else if(bit_index < byte_index_start)
+		else if(bit_position < byte_index_start)
 			throw new BitException(ExceptionType.NEGATIVE_INDEX);
-			
-		final int final_bit_size = array.length * BYTE_LENGTH;
-		final int byte_index = bit_index / BYTE_LENGTH;  
 		
-		if(bit_index >= final_bit_size)	
+		final int total_bit_len = array.length * BYTE_LENGTH;
+		
+		if(bit_position >= total_bit_len)	
 			throw new BitException(ExceptionType.GREATER_THAN_LENGTH);
 		
 		// Helps to move Bit at 'byte_index' into Bit position 0.
-		final int real_bit_index = bit_index % BYTE_LENGTH;
+		final int real_bit_index = bit_position % BYTE_LENGTH;
 		
 		// If we Shift our specified Bit then &(AND) and Compare for '1'.
 		// We can determine that the Bit at the given Index is One or Zero.
 		return (array[byte_index] >> real_bit_index & BIT_ONE_) == BIT_ONE_;
+	}
+	
+	/**
+	 * Checks that the specified Bit Position within the 'byte_' 
+	 * is Value '1'. Use in reverse Index. With Index Zero being 
+	 * the far Right Bit.
+	 * 
+	 * @param byte_ - Byte to check Bit inside of.
+	 * @param bit_position - Index within the Bit to Verify. 
+	 * @throws BitException - Thrown for Invalid Input.
+	 * @return True if Bit at given Index is '1'.
+	 * @since 0.4
+	 */
+	public static boolean isBitSet(final byte byte_, final int bit_position) throws BitException 
+	{	 
+		final byte byte_index_length = 7, byte_index_start = 0;
+		
+		if(bit_position > byte_index_length)	
+			throw new BitException(ExceptionType.GREATER_THAN_LENGTH);
+		else if (bit_position < byte_index_start)
+			throw new BitException(ExceptionType.NEGATIVE_INDEX);
+		
+		return (byte_ >> (bit_position % BYTE_LENGTH) & BIT_ONE_) == BIT_ONE_;
 	}
 	
 	/**
@@ -483,10 +618,7 @@ public final class ByteTools
 		final byte byte_index_length = 7, byte_index_start = 0;
 	
 		if ((bit_position_0 > byte_index_length) || (bit_position_1 > byte_index_length) || (bit_position_0 >= byte_length) || (bit_position_1 >= byte_length))
-		{
-			System.out.println("Byte length: " + byte_length + "\n pos 0: " + bit_position_0 + "\n pos 1: " + bit_position_1);
 			throw new BitException(ExceptionType.GREATER_THAN_LENGTH);
-		}
 		else if ((bit_position_0 < byte_index_start) || (bit_position_1 < byte_index_start))
 			throw new BitException(ExceptionType.NEGATIVE_INDEX);
 
@@ -504,27 +636,6 @@ public final class ByteTools
 		return (byte) (byte_ ^ mask);// TADAM!!!
 	}
 	
-	/**
-	 * Checks that the specified Bit Position within the 'byte_' 
-	 * is Value '1'. 
-	 * 
-	 * @param byte_ - Byte to check Bit inside of.
-	 * @param bit_position - Index within the Bit to Verify. 
-	 * @throws BitException - Thrown for Invalid Input.
-	 * @return True if Bit at given Index is '1'.
-	 * @since 0.4
-	 */
-	public static boolean isBitSet(final byte byte_, final int bit_position) throws BitException 
-	{	 
-		final byte byte_index_length = 7, byte_index_start = 0;
-		
-		if(bit_position > byte_index_length)	
-			throw new BitException(ExceptionType.GREATER_THAN_LENGTH);
-		else if (bit_position < byte_index_start)
-			throw new BitException(ExceptionType.NEGATIVE_INDEX);
-		
-		return (byte_ >> (bit_position % BYTE_LENGTH) & BIT_ONE_) == BIT_ONE_;
-	}
 
 	/**
 	 * Converts each Character within the Parameter 'text' to its

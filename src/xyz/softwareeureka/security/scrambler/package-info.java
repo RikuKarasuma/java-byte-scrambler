@@ -1,8 +1,6 @@
 /**
  * A series of Byte Manipulation Tools which allows for the enhanced 
- * Security of Data. Some of these Tools depend on the Twos
- * Complement System of Signed Variables.
- * 
+ * Security of Data. 
  *  
  *  ** Newly Added **
  *  
@@ -10,6 +8,11 @@
  *  0.2 Implemented functions that deal exclusively with 
  *  Primitive Bytes.
  *  0.2 EncodedMessage now deals with raw Bytes.
+ *  
+ *  ** Next Release Plans **
+ *  
+ *  0.3 More Types and Cipher possibilities.
+ *  0.3 New Bit Scrambling Functions.
  *  
  * @author Owen McMonagle.
  * @since 05/11/2017 updated 08/11/2017

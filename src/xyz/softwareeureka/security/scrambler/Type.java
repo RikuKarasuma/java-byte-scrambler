@@ -27,4 +27,20 @@ public enum Type
 	 * Swap with the Bit to the Right.
 	 */
 	RIGHT;
+	/**
+	 * Swap with the Bit to the Left. Then invert both Bits.
+	 */
+	//INVERSE_LEFT,
+	/**
+	 * Swap with the Bit to the Right. Then invert both Bits.
+	 */
+	//INVERSE_RIGHT,
+	/**
+	 * Invert all the Bits within this Byte.
+	 */
+	//INVERSE_ALL,
+	/**
+	 * Invert every Second Bit within this Byte.
+	 */
+	//SHREDDED;
 }
