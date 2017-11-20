@@ -8,7 +8,7 @@ package xyz.softwareeureka.security.scrambler;
  *  
  * @author Owen McMonagle.
  * @since 06/11/2017
- * @version 0.2
+ * @version 0.3
  * 
  * @see ByteTools
  * @see EncodedMessage
@@ -19,28 +19,32 @@ package xyz.softwareeureka.security.scrambler;
 public final class TestManager 
 {
 	
-	public TestManager() 
+	private boolean failed = false;
+	
+	TestManager() 
 	{
 		final boolean byte_tools_tests = ByteTools.performTests(),
-				encoded_msg_tests = EncodedMessage.test();
+				encoded_msg_tests = EncodedMessage.test(),
+				storage_tests = Safe.test();
 		
-		if(byte_tools_tests && encoded_msg_tests)
+		if(byte_tools_tests && encoded_msg_tests && storage_tests)
 			System.out.println("All Tests Completed...\nNo Errors found.");
 		else
 		{
+			failed = true;
 			System.err.println("All Tests Completed...\nErrors found.");
 			System.err.println("Byte tools successful: " + byte_tools_tests);
 			System.err.println("Encoding message successful: " + encoded_msg_tests);
+			System.err.println("Safe storage successful: " + storage_tests);
 		}
 	
 	}
 
 	public static void main(String[] args) 
 	{
-		//new TestManager();
-		
-		for(int i = 0; i < 10; i ++)
-			EncodedMessage.test();
+		for(int i = 0; i < 10000; i ++)
+			if(new TestManager().failed)
+				System.exit(1);
 	}
 
 }

@@ -10,26 +10,29 @@ import java.util.Arrays;
  * Takes Byte Array and scrambles its Information.<br><br>
  * 
  * Takes User specified Text and scrambles it using a Randomly generated 
- * {@link Smartprint}.<br><br>
+ * {@link Blueprint}.<br><br>
  * 
  * Takes a encoded Byte Array for storage and/or later decryption.<br><br>
  * 
- * Takes User specified Binary and {@link Smartprint} for decoding said
+ * Takes User specified Binary and {@link Blueprint} for decoding said
  * Binary.<br><br>
  * 
- * Takes User specified Text and {@link Smartprint}. Then scrambles said
- * Text with specified {@link Smartprint}<br><br>
+ * Takes User specified Text and {@link Blueprint}. Then scrambles said
+ * Text with specified {@link Blueprint}<br><br>
  * 
  * 
- * Never intended to be Polymorphed, Inherited or Serialized. The scrambled
- * Bytes and {@link Smartprint} Cipher Map, if transported.. are to be done
- * so, separately. This is to limit the Risk that the Map will be used to 
- * decipher the scrambled Bytes. 
+ * Never intended to be polymorphed, inherited or serialized. The scrambled
+ * bytes and {@link Blueprint} cipher map, if transported.. are advised to 
+ * be done so, separately. This is to limit the risk that the map will be 
+ * used to decipher the scrambled bytes. The best way to transport would be
+ * using the {@link Safe} object to save to file without the use of 
+ * serialization. 
  * 
  *  
  * @author Owen McMonagle.
  * @since 06/11/2017 updated 08/11/2017
  * @see ByteTools
+ * @see Blueprint
  * @see Smartprint
  * @see Type
  * @version 0.2
@@ -37,6 +40,7 @@ import java.util.Arrays;
  */
 public final class EncodedMessage
 {
+
 	/**
 	 * Encoded/Decoded Bytes from User passed Data. Depending on the
 	 * Constructor used.
@@ -46,7 +50,7 @@ public final class EncodedMessage
 	/**
 	 * Specific {@link Smartprint} used to encode Bytes.
 	 */
-	private Smartprint map = null;
+	private volatile Blueprint map = null;
 	
 	/**
 	 * For storing Bytes with no Map.
@@ -58,11 +62,11 @@ public final class EncodedMessage
 	}
 	
 	/**
-	 * For encoding a Byte Array with a specified {@link Smartprint}.
+	 * For encoding a Byte Array with a specified {@link Blueprint}.
 	 * @param bytes - Random Bytes to encode.
 	 * @param encoding_map - Cipher Map to encode with.
 	 */
-	public EncodedMessage(final byte[] bytes, final Smartprint encoding_map)
+	public EncodedMessage(final byte[] bytes, final Blueprint encoding_map)
 	{
 		map = encoding_map;
 		msg = ByteTools.scramble(bytes, map);
@@ -83,7 +87,7 @@ public final class EncodedMessage
 	 * @param encoding_map - {@link Smartprint} to encode with.
 	 * @param text - Text to encode.
 	 */
-	public EncodedMessage(final Smartprint encoding_map, final String text) 
+	public EncodedMessage(final Blueprint encoding_map, final String text) 
 	{
 		map = encoding_map;
 		msg = ByteTools.scramble(text.getBytes(), map);
@@ -99,23 +103,23 @@ public final class EncodedMessage
 	}
 	
 	/**
-	 * Returns the {@link Smartprint} used to encode with.
-	 * @return Encoding {@link Smartprint}.
+	 * Returns the {@link Blueprint} used to encode with.
+	 * @return Encoding {@link Blueprint}.
 	 */
-	public Smartprint getMap()
+	public Blueprint getMap()
 	{
 		return map;
 	}
 	
 	/**
-	 * Decodes the encoded Bytes with the specified {@link Smartprint}.
+	 * Decodes the encoded Bytes with the specified {@link Blueprint}.
 	 * The decoded Bytes are then returned in an Array. If no encoded
-	 * Bytes or {@link Smartprint} exist, then an empty Byte Array is
+	 * Bytes or {@link Blueprint} exist, then an empty Byte Array is
 	 * returned.
-	 * @param encoding_map - Specific {@link Smartprint} to decode with.
+	 * @param encoding_map - Specific {@link Blueprint} to decode with.
 	 * @return Decoded Byte Array, or Empty Byte Array if Error occurred.
 	 */
-	public byte[] getDecoded(final Smartprint encoding_map)
+	public byte[] getDecoded(final Blueprint encoding_map)
 	{
 		if(msg != null && encoding_map != null)
 			return ByteTools.scramble(Arrays.copyOf(msg, msg.length), encoding_map);
@@ -129,7 +133,7 @@ public final class EncodedMessage
 	 * and reversed. Will it still match in the end and can it
 	 * be reverted? If so, our code works.
 	 * 
-	 * @return True if {@link EncodedMessage}, {@link Smartprint}
+	 * @return True if {@link EncodedMessage}, {@link Blueprint}
 	 * and {@link ByteTools} works as intended.
 	 */
 	public static boolean test()

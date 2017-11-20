@@ -9,7 +9,7 @@ package xyz.softwareeureka.security.scrambler;
  * <li>Swap Bit Right</li>
  * <li>Swap Bit Left, invert both Bits</li>
  * <li>Swap Bit Right, invert both Bits</li>
- * <li>Invert all Bits</li>
+ * <li>Invert all Bits after the first index</li>
  * <li>Invert Bits, 0, 2, 4 and 6.</li>
  * </ul>
  * 
@@ -40,7 +40,8 @@ public enum Type
 	 */
 	INVERSE_RIGHT,
 	/**
-	 * Invert all the Bits within this Byte.
+	 * Invert all the Bits within this Byte after the first
+	 * index.
 	 */
 	INVERSE_ALL,
 	/**

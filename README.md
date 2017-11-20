@@ -8,14 +8,15 @@ Features as of yet: <br><br>
 (To Binary String, Padding, basic Bit Scrambler) <br>
 <b>Fully Tested</b> (TestManager) <br><br>
 
- ** Newly Added ** <br><br>
- 
+ ** Newly Added **<br>
  0.2 Shifted focus away from Binary Strings.<br>
- 0.2 Implemented functions that deal exclusively with <br>
- Primitive Bytes. <br>
- 0.2 EncodedMessage now deals with raw Bytes. <br>
- 0.3 More Types and Cipher possibilities. <br>
- 0.3 New Bit Scrambling Functions. <br><br>
+ 0.2 Implemented functions that deal exclusively with<br>
+ Primitive Bytes.<br>
+ 0.2 EncodedMessage now deals with raw Bytes.<br>
+ 0.3 More Types and Cipher possibilities.<br>
+ 0.3 New Bit Scrambling Functions.<br>
+ 0.3 Safe enables saving EncodedMessage and Blueprint<br>
+ to file in a non-serialized manner.<br><br>
 
 License: <br>
 Use as you see fit. 

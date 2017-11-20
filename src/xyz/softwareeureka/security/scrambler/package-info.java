@@ -10,11 +10,12 @@
  *  0.2 EncodedMessage now deals with raw Bytes.
  *  0.3 More Types and Cipher possibilities.
  *  0.3 New Bit Scrambling Functions.
+ *  0.3 Safe enables saving EncodedMessage and Blueprint 
+ *  to file in a non-serialized manner.
  *  
- *  ** Next Release Plans **
  *  
  * @author Owen McMonagle.
- * @since 05/11/2017 updated 09/11/2017
+ * @since 05/11/2017 updated 20/11/2017
  * @version 0.3
  * 
  * @see xyz.softwareeureka.security.scrambler.TestManager

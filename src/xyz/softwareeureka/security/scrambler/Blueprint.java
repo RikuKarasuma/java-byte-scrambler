@@ -8,19 +8,46 @@ import java.util.ArrayList;
  * Ciphers to be Masked and Unmasked with ease!  
  *  
  * @author Owen McMonagle.
- * @since 05/11/2017 Updated 06/11/2017
- * @version 0.3
+ * @since 05/11/2017 Updated 19/11/2017
+ * @version 0.4
  */
-public abstract class Blueprint extends ArrayList<Type> 
+public abstract class Blueprint
 {
-
-	private static final long serialVersionUID = -7645608110916359771L;
+	
+	/**
+	 * Each manipulation {@link Type}.
+	 */
+	private ArrayList<Type> manipulationTypes = new ArrayList<Type>(); 
 	
 	/**
 	 * Indexes of each {@link Type} Position. Used to determine where
 	 * the {@link Type} will take place from within the Byte.
 	 */
 	private byte[] indexes = new byte[0]; 
+	
+	/**
+	 * Default Constructor.
+	 */
+	public Blueprint() {}
+	
+	/**
+	 * Constructor for {@link Blueprint} re-construction via byte arrays.
+	 * 
+	 * @param types - Each byte is an ordinal value of {@link Type}.
+	 * @param bit_indexes - Each byte is a bit index.
+	 */
+	public Blueprint(final byte[] types, final byte[] bit_indexes) 
+	{
+		if(types != null && bit_indexes != null)
+		{
+			indexes = new byte[bit_indexes.length];
+			for(int i = 0; i < types.length; i ++)
+			{
+				this.manipulationTypes.add(Type.values()[types[i]]);
+				this.indexes[i] = bit_indexes[i];
+			}
+		}
+	}
 	
 	/**
 	 * List that populates the {@link Blueprint} with Types. How it does 
@@ -36,6 +63,16 @@ public abstract class Blueprint extends ArrayList<Type>
 	 * up to the Inheritor.
 	 */
 	public abstract void populateIndexes();
+	
+	/**
+	 * Retrieves the {@link Type} at the given parameter 'index'.
+	 * @param index - Index of the {@link Type} to return.
+	 * @return Type at index.
+	 */
+	public final Type getType(final int index)
+	{
+		return manipulationTypes.get(index);
+	}
 	
 	/**
 	 * Sets a new Index Value at the specified Index.
@@ -82,8 +119,27 @@ public abstract class Blueprint extends ArrayList<Type>
 	public final void print()
 	{
 		for(int byte_ = 0; byte_ < indexes.length; byte_ ++)
-			System.out.println("Byte: " + byte_ + "\nIndex: " + indexes[byte_]
-					+ "\nType: " + get(byte_).toString());
+			System.out.println("Byte: " + byte_ + ", Index: " + indexes[byte_]
+					+ ", Type: " + manipulationTypes.get(byte_).toString());
 	}
-
+	
+	/**
+	 * A bypass to ArrayLists addAll. Allows children to populate
+	 * the manipulation {@link Type} list.
+	 * @param list - List of {@link Type}s to populate this blueprint with.
+	 */
+	public final void addAll(ArrayList<Type> list)
+	{
+		if(list != null)
+			manipulationTypes.addAll(list);
+	}
+	
+	/**
+	 * Prevents this object from being cloned.
+	 */
+	@Override
+	public Object clone() throws CloneNotSupportedException 
+	{
+		throw new CloneNotSupportedException();
+	}
 }

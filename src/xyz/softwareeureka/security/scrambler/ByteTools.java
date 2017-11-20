@@ -10,8 +10,8 @@ import xyz.softwareeureka.security.scrambler.BitException.ExceptionType;
  * Complement System and have not been tested outside of such.
  *  
  * @author Owen McMonagle.
- * @version 0.5
- * @since 05/11/2017 Updated 09/11/2017
+ * @version 0.6
+ * @since 05/11/2017 Updated 19/11/2017
  * 
  * @see Blueprint
  * @see Type
@@ -334,9 +334,9 @@ public final class ByteTools
 	{
 		StringBuilder builder = new StringBuilder();
 		String[] split_binary = binary.split(BYTE_DELIMITER);
-		builder.append(scramble(split_binary[0], cipher.getIndex(0), cipher.get(0)));
-		for( int i = 1; i < cipher.size(); i ++)
-			builder.append(BYTE_DELIMITER + scramble(split_binary[i], cipher.getIndex(i), cipher.get(i)));
+		builder.append(scramble(split_binary[0], cipher.getIndex(0), cipher.getType(0)));
+		for( int i = 1; i < cipher.getIndexes().length; i ++)
+			builder.append(BYTE_DELIMITER + scramble(split_binary[i], cipher.getIndex(i), cipher.getType(i)));
 		return builder.toString();
 	}
 
@@ -384,10 +384,10 @@ public final class ByteTools
 	public static byte[] scramble(final byte[] bytes, final Blueprint cipher)
 	{
 		final byte[] new_address_space = new byte[bytes.length];
-		for(int i = 0; i < cipher.size(); i ++)
+		for(int i = 0; i < cipher.getIndexes().length; i ++)
 			try 
 			{
-				new_address_space[i] = scramble(bytes[i], cipher.getIndex(i), cipher.get(i));
+				new_address_space[i] = scramble(bytes[i], cipher.getIndex(i), cipher.getType(i));
 			} 
 			catch (BitException e) 
 			{
@@ -721,15 +721,42 @@ public final class ByteTools
 	}
 	
 	/**
-	 * Inverts all of the Bits within the Parameter 'byte_'. To be used
-	 * via {@link Type}.
+	 * Inverts all of the Bits within the Parameter 'byte_' after the index
+	 * Zero. To be used via {@link Type}.
 	 * @param byte_ - Byte of Data to invert.
 	 * @return New inverted Byte.
 	 * @since 0.5
 	 */
-	public static byte inverse(final byte byte_)
+	public static byte inverse(byte byte_)
 	{
-		return (byte) ~byte_;
+		final byte length = (byte) (Long.toBinaryString(byte_).length()-1);
+		
+		for(int i = 1; i < length; i ++)
+			try 
+			{
+				byte_ = invertBitAt(byte_, i, false, false);
+			} 
+			catch (BitException e)
+			{
+				e.printStackTrace();
+			}
+			
+		return byte_;
+	}
+	
+	/**
+	 * Extracts bits from a parameter 'byte_' at the specified indexes.
+	 * New extracted bits are then returned. 
+	 * @param byte_ - Byte to extract from.
+	 * @param begin - Index from which to begin extraction. (Inclusive)
+	 * @param end - Index from which to end extraction. (Exclusive)
+	 * @return Extracted bit within a new byte.
+	 * @since 0.6
+	 */
+	public static byte extract(byte byte_, int begin, int end)
+	{
+		byte mask = (byte) ((1 << (end - begin)) - 1);
+		return (byte) ((byte_ >> begin) & mask);
 	}
 	
 

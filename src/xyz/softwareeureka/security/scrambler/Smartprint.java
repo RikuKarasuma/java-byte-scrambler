@@ -4,11 +4,18 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * A special {@link Blueprint} which molds itself to a specific Binary
- * String. This is done by taking the Binary String which this is to 
- * generate a Cipher {@link Type} Map for. Then generating a Random
- * {@link Type} and modified Index based upon each Byte within. This
- * ensures a completely new Cipher each time.
+ * A special type of {@link Blueprint} which molds itself to a specific 
+ * Binary String where each Byte is delimited by '~', Binary String 
+ * split up via an Array or a simple Byte Array. This is done by 
+ * taking the Binary String which this is to generate a Cipher 
+ * {@link Type} Map for. Then generating a Random {@link Type} and
+ * modified Index based upon each Byte within. This ensures a 
+ * completely new Cipher each time.
+ * 
+ * <br><br>
+ * The passed Data is Null after instantiation. This is to prevent
+ * from simply decoding the Data from the {@link Blueprint} via 
+ * Reflection or some such Witchcraft.
  *   
  * @author Owen McMonagle.
  * @version 0.4
@@ -21,20 +28,19 @@ import java.util.Random;
  */
 public final class Smartprint extends Blueprint 
 {
-	private static final long serialVersionUID = -1363449840374640942L;
 	
 	/**
 	 * Each Binary String in Array form. Used for the population
 	 * of {@link Type}s and Indexes within 'populate' and 
-	 * 'populateIndexes'. Null after use within Constructor.
+	 * 'populateIndexes'. Null after instantiation.
 	 */
-	private String[] binary = null;
+	private volatile String[] binary = null;
 	
 	/**
-	 * Alternative Storage, for non Binary Strings. Null after use 
-	 * within Constructor.
+	 * Alternative Storage, for non Binary Strings. Null after 
+	 * instantiation.
 	 */
-	private byte[] data = null;
+	private volatile byte[] data = null;
 
 	/**
 	 * Takes in a Binary String where each Byte is Delimited with
@@ -44,7 +50,8 @@ public final class Smartprint extends Blueprint
 	 * String Array.
 	 *   
 	 * @param binary_str - Binary String where each Byte is delimited
-	 * with a '~' Character.
+	 * with a '~' Character. Each of these delimited Bytes are used 
+	 * as a Specification for a Cipher Map.
 	 */
 	public Smartprint(final String binary_str) 
 	{
@@ -62,7 +69,7 @@ public final class Smartprint extends Blueprint
 	 * String Array.
 	 *   
 	 * @param binary_strs - Binary Strings where each Byte is an Element in the
-	 * Array.
+	 * Array. Each of these are used as a Specification for a Cipher Map.
 	 */
 	public Smartprint(final String[] binary_strs) 
 	{
@@ -73,6 +80,13 @@ public final class Smartprint extends Blueprint
 		binary = null;
 	}
 	
+	/**
+	 * Takes in a Byte Array. After which, we populate our {@link Blueprint} 
+	 * with {@link Type}s, generate our Bit Indexes and finally dispose of our 
+	 * Byte Array.
+	 * @param byte_array - Byte Array to generate a Cipher Map for. Each of these 
+	 * Bytes are used as a Specification for a Cipher Map.
+	 */
 	public Smartprint(final byte[] byte_array) 
 	{
 		data = byte_array;
