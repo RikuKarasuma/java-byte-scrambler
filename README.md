@@ -6,7 +6,7 @@ Features as of yet: <br><br>
 <b>Random Key Generation</b> (Blueprint, Smartprint, Type) <br>
 <b>Save EncodedMessage and Blueprint to file</b> (Safe) <br>
 <b>Miscellaneous Byte Tools</b> (ByteTools) <br>
-(To Binary String, Padding, basic Bit Scrambler) <br>
+(to binary string, binary padding, basic bit scrambler, is bit set, extract from byte, swap bits, invert bits, swap left, swap left invert, swap right, swap right invert etc) <br>
 <b>Fully Tested</b> (TestManager) <br><br>
 
  ** Newly Added **<br>
