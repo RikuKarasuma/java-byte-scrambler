@@ -1,5 +1,5 @@
 # java-byte-scrambler
-Java Byte Scrambling/Manipulation Tools with an Emphasis on Data Security, particularly in sending data across networks.
+Java Byte scrambling/manipulation tools with an emphasis on Data Security, particularly in sending data across networks.
 
 Features as of yet: <br><br>
 <b>Encoded Messaging</b> (EncodedMessage) <br>
